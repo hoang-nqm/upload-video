@@ -1,46 +1,56 @@
-#root {
+.video-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+}
+
+.full-screen-video {
   width: 100%;
+  height: 100%;
+  object-fit: cover; /* Video sẽ lấp đầy toàn bộ màn hình */
 }
 
-.main-container {
-  width: 100%;
-  max-width: 900px; /* Giới hạn độ rộng trên máy tính */
-  padding: 10px;
+.overlay-controls {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
 }
 
-.video-card {
-  background: transparent !important;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-.video-player {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.video-overlay {
-  padding: 15px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.1);
+.mute-button {
+  height: 50px !important;
+  padding: 0 30px !important;
+  font-size: 18px !important;
+  background: rgba(255, 77, 79, 0.8) !important;
+  border: none !important;
   backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-/* Tối ưu cho điện thoại */
-@media (max-width: 768px) {
-  .main-container {
-    padding: 0;
-    max-width: 100%;
-  }
-  
-  .video-card {
-    border-radius: 0;
-  }
+.bottom-gradient {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none; /* Để không chặn bấm vào video */
+}
 
-  .video-player {
-    height: 100vh; /* Có thể để 100vh nếu muốn video full màn hình điện thoại */
-    object-fit: cover; /* Video sẽ lấp đầy màn hình */
+/* Tối ưu cho PC: Nếu muốn video không bị vỡ trên màn hình ngang */
+@media (min-width: 1024px) {
+  .full-screen-video {
+    width: auto;
+    max-width: 450px; /* Thu nhỏ lại như khung điện thoại trên PC */
+    height: 90vh;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(255,255,255,0.1);
   }
 }

@@ -1,50 +1,57 @@
-import React from 'react';
-import { Layout, Card, Typography, ConfigProvider } from 'antd';
+import React, { useRef, useState, useEffect } from 'react';
+import { Layout, Button, ConfigProvider } from 'antd';
+import { SoundOutlined, AudioMutedOutlined } from '@ant-design/icons';
 import './App.css';
 
 const { Content } = Layout;
-const { Title } = Typography;
 
 function App() {
-  // Nếu video nằm trong thư mục public/my-video.mp4
+  const videoRef = useRef(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  // Đường dẫn video trong thư mục public
   const videoSrc = "/my-video.mp4"; 
 
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
+
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: '#1890ff',
-        },
-      }}
-    >
-      <Layout style={{ minHeight: '100vh', backgroundColor: '#000' }}>
-        <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <ConfigProvider theme={{ token: { colorPrimary: '#ff4d4f' } }}>
+      <Layout style={{ minHeight: '100vh', backgroundColor: '#000', overflow: 'hidden' }}>
+        <Content className="video-wrapper">
           
-          {/* Container cho video - Chiếm toàn màn hình hoặc theo khung */}
-          <div className="main-container">
-            <Card
-              bordered={false}
-              bodyStyle={{ padding: 0 }}
-              className="video-card"
+          <video
+            ref={videoRef}
+            className="full-screen-video"
+            autoPlay
+            muted // Bắt buộc phải có để tự động chạy
+            loop
+            playsInline
+          >
+            <source src={videoSrc} type="video/mp4" />
+          </video>
+
+          {/* Lớp phủ điều khiển */}
+          <div className="overlay-controls">
+            <Button 
+              type="primary" 
+              shape="round" 
+              icon={isMuted ? <AudioMutedOutlined /> : <SoundOutlined />} 
+              size="large"
+              onClick={toggleMute}
+              className="mute-button"
             >
-              <video
-                className="video-player"
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-              >
-                <source src={videoSrc} type="video/mp4" />
-                Trình duyệt của bạn không hỗ trợ thẻ video.
-              </video>
-              
-              {/* <div className="video-overlay">
-                <Title level={4} style={{ color: 'white', margin: 0, textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
-                  Video đang phát trực tiếp
-                </Title>
-              </div> */}
-            </Card>
+              {isMuted ? "Chạm để bật tiếng" : "Đang bật âm thanh"}
+            </Button>
+          </div>
+
+          {/* Hiệu ứng mờ ở dưới để text dễ đọc (nếu cần) */}
+          <div className="bottom-gradient">
+            <h2 style={{ color: 'white', marginBottom: 20 }}>Video của bạn</h2>
           </div>
 
         </Content>
