@@ -1,67 +1,93 @@
-.video-container {
-  position: relative;
-  width: 100vw;
+/* Container tổng */
+.app-container {
   height: 100vh;
+  width: 100vw;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
   background-color: #000;
-  overflow: hidden;
+  scrollbar-width: none; /* Ẩn scrollbar Firefox */
+}
+
+.app-container::-webkit-scrollbar {
+  display: none; /* Ẩn scrollbar Chrome/Safari */
+}
+
+/* Mỗi trang video */
+.video-section {
+  height: 100vh;
+  width: 100vw;
+  scroll-snap-align: start;
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center;    /* Căn giữa theo chiều dọc */
+  background-color: #000;
+}
+
+/* Khung chứa video và nút bấm - Quan trọng nhất */
+.video-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  max-width: 500px; /* Giới hạn độ rộng để video không bị bẹt trên máy tính */
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
+/* Video hiển thị */
 .video-player {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Video tràn màn hình điện thoại */
+  object-fit: contain; /* Giữ nguyên tỷ lệ video, không bị mất hình */
+  background-color: #000;
 }
 
-/* VỊ TRÍ NÚT BẤM: Ở ĐÂY LÀ GÓC TRÊN BÊN PHẢI */
-.volume-control-wrapper {
+/* Lớp phủ icon */
+.video-overlay {
   position: absolute;
-  top: 30px; /* Cách mép trên 30px */
-  right: 20px; /* Cách mép phải 20px */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Để khi bấm nó xuyên xuống wrapper */
+  transition: background 0.3s ease;
+}
+
+.video-overlay.is-paused {
+  background: rgba(0, 0, 0, 0.2); /* Làm tối nhẹ khi dừng */
+}
+
+.icon-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 100;
-}
-
-.mute-btn {
-  width: 50px !important;
-  height: 50px !important;
-  font-size: 20px !important;
-  background: rgba(0, 0, 0, 0.5) !important; /* Nền trong suốt tối */
-  border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
-  backdrop-filter: blur(10px); /* Hiệu ứng kính mờ */
-}
-
-/* Hiệu ứng nháy đỏ khi đang tắt tiếng để nhắc người dùng bấm vào */
-.mute-btn.is-muted {
-  background: rgba(255, 77, 79, 0.8) !important;
-  box-shadow: 0 0 15px rgba(255, 77, 79, 0.5);
-  animation: pulse 1.5s infinite;
-}
-
-.mute-text {
   color: white;
-  font-size: 12px;
-  margin-top: 8px;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
-  font-weight: 500;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+.control-icon {
+  font-size: 70px;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+  opacity: 0.9;
 }
 
-/* Tối ưu cho PC */
-@media (min-width: 1024px) {
+.control-text {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
+}
+
+/* Tối ưu cho điện thoại */
+@media (max-width: 768px) {
+  .video-wrapper {
+    max-width: 100%;
+  }
   .video-player {
-    width: auto;
-    max-width: 450px;
-    height: 90vh;
-    border-radius: 20px;
+    object-fit: cover; /* Trên điện thoại thì cho tràn màn hình giống TikTok */
   }
 }

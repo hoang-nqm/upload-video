@@ -1,67 +1,60 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Button, ConfigProvider } from 'antd';
-import { SoundOutlined, AudioMutedOutlined } from '@ant-design/icons';
+import React, { useRef, useState } from 'react';
+import { PlayCircleFilled, PauseCircleFilled } from '@ant-design/icons';
 import './App.css';
 
-function App() {
+const VideoItem = ({ src }) => {
   const videoRef = useRef(null);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  // Hàm xử lý bật/tắt tiếng dành riêng cho Safari
-  const toggleMute = () => {
+  const togglePlay = () => {
     if (videoRef.current) {
-      const video = videoRef.current;
-      
-      if (isMuted) {
-        video.muted = false;
-        // Quan trọng: Gọi play() sau khi bỏ mute để Safari kích hoạt âm thanh
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            console.log("Safari đã mở âm thanh thành công");
-          }).catch(error => {
-            console.log("Safari chặn âm thanh: ", error);
-          });
-        }
-        setIsMuted(false);
+      if (videoRef.current.paused) {
+        videoRef.current.muted = false;
+        videoRef.current.play();
+        setIsPlaying(true);
       } else {
-        video.muted = true;
-        setIsMuted(true);
+        videoRef.current.pause();
+        setIsPlaying(false);
       }
     }
   };
 
   return (
-    <ConfigProvider theme={{ token: { colorPrimary: '#ff4d4f' } }}>
-      <div className="video-container">
+    <div className="video-section">
+      {/* Wrapper này giúp định vị nút bấm luôn ở giữa video */}
+      <div className="video-wrapper" onClick={togglePlay}>
         <video
           ref={videoRef}
           className="video-player"
-          autoPlay
-          muted
+          src={src}
           loop
-          playsInline // Bắt buộc cho iOS
-          preload="auto"
-        >
-          <source src="/my-video.mp4" type="video/mp4" />
-        </video>
-
-        {/* Nút điều khiển âm lượng */}
-        <div className="volume-control-wrapper">
-          <Button 
-            type="primary" 
-            shape="circle" 
-            icon={isMuted ? <AudioMutedOutlined /> : <SoundOutlined />} 
-            size="large"
-            onClick={toggleMute}
-            className={`mute-btn ${isMuted ? 'is-muted' : ''}`}
-          />
-          <span className="mute-text">
-            {isMuted ? "Chạm để mở âm thanh" : "Âm thanh đang bật"}
-          </span>
+          playsInline
+        />
+        
+        {/* Lớp phủ điều khiển */}
+        <div className={`video-overlay ${!isPlaying ? 'is-paused' : ''}`}>
+          {!isPlaying && (
+            <div className="icon-box">
+              <PlayCircleFilled className="control-icon" />
+              <p className="control-text">BẤM ĐỂ PHÁT</p>
+            </div>
+          )}
+          {/* Hiện icon pause nhanh rồi ẩn khi đang phát nếu bạn muốn, 
+              hoặc bỏ trống để không che video */}
         </div>
       </div>
-    </ConfigProvider>
+    </div>
+  );
+};
+
+function App() {
+  const videoList = ["/video1.mp4", "/video2.mp4"];
+  return (
+    <div className="app-container">
+      {videoList.map((src, index) => (
+        <VideoItem key={index} src={src} />
+      ))}
+    </div>
   );
 }
 
